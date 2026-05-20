@@ -28,9 +28,12 @@ scaler = joblib.load(SCALER_PATH)
 # ─────────────────────────────────────────
 #  MAIN FUNCTION
 # ─────────────────────────────────────────
+# def predict_and_advise(pregnancies, glucose, blood_pressure,
+#                         skin_thickness, insulin, bmi,
+#                         diabetes_pedigree, age):
 def predict_and_advise(pregnancies, glucose, blood_pressure,
                         skin_thickness, insulin, bmi,
-                        diabetes_pedigree, age):
+                        diabetes_pedigree, age, gender="Female"):
     """
     Takes raw patient values → ML prediction → Groq LLM health advice.
     Returns: prediction (0 or 1), confidence (%), risk_label, advice
@@ -59,8 +62,12 @@ You are a friendly and professional medical AI assistant.
 A patient has been analyzed by a Machine Learning model trained on the
 Pima Indians Diabetes Dataset. Here are the patient details:
 
+# - Age                       : {age} years
+# - Pregnancies               : {pregnancies}
+# - Glucose Level             : {glucose} mg/dL
 - Age                       : {age} years
-- Pregnancies               : {pregnancies}
+- Gender                    : {gender}
+- Pregnancies               : {pregnancies} {'(Not Applicable)' if gender == 'Male' else ''}
 - Glucose Level             : {glucose} mg/dL
 - Blood Pressure            : {blood_pressure} mmHg
 - Skin Thickness            : {skin_thickness} mm

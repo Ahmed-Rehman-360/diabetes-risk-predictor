@@ -88,7 +88,16 @@ st.markdown("""
 st.sidebar.title("👤 Patient Information")
 st.sidebar.markdown("Fill in the patient details below:")
 
-pregnancies       = st.sidebar.slider("🤰 Pregnancies",           0,  17,  2)
+# pregnancies       = st.sidebar.slider("🤰 Pregnancies",           0,  17,  2)
+# Gender selection
+gender = st.sidebar.radio("⚧ Gender", ["Female", "Male"])
+
+# Show pregnancies only for female
+if gender == "Female":
+    pregnancies = st.sidebar.slider("🤰 Pregnancies", 0, 17, 1)
+else:
+    pregnancies = 0
+    st.sidebar.info("ℹ️ Pregnancies set to 0 for Male patients")
 glucose           = st.sidebar.slider("🩸 Glucose (mg/dL)",       0, 200, 120)
 blood_pressure    = st.sidebar.slider("💓 Blood Pressure (mmHg)", 0, 122,  70)
 skin_thickness    = st.sidebar.slider("📏 Skin Thickness (mm)",   0,  99,  20)
@@ -107,17 +116,28 @@ col1, col2 = st.columns([1, 1], gap="large")
 with col1:
     st.subheader("📋 Patient Summary")
 
+    # summary_data = {
+    #     "Feature"       : ["Pregnancies","Glucose","Blood Pressure",
+    #                        "Skin Thickness","Insulin","BMI",
+    #                        "Diabetes Pedigree","Age"],
+    #     "Value"         : [pregnancies, glucose, blood_pressure,
+    #                        skin_thickness, insulin, bmi,
+    #                        diabetes_pedigree, age],
+    #     "Normal Range"  : ["0–10","70–140 mg/dL","60–80 mmHg",
+    #                        "10–50 mm","16–166 IU/mL","18.5–24.9",
+    #                        "0.0–1.0","–"]
+    # }
     summary_data = {
-        "Feature"       : ["Pregnancies","Glucose","Blood Pressure",
-                           "Skin Thickness","Insulin","BMI",
-                           "Diabetes Pedigree","Age"],
-        "Value"         : [pregnancies, glucose, blood_pressure,
-                           skin_thickness, insulin, bmi,
-                           diabetes_pedigree, age],
-        "Normal Range"  : ["0–10","70–140 mg/dL","60–80 mmHg",
-                           "10–50 mm","16–166 IU/mL","18.5–24.9",
-                           "0.0–1.0","–"]
-    }
+    "Feature"       : ["Gender","Pregnancies","Glucose","Blood Pressure",
+                       "Skin Thickness","Insulin","BMI",
+                       "Diabetes Pedigree","Age"],
+    "Value"         : [gender, pregnancies, glucose, blood_pressure,
+                       skin_thickness, insulin, bmi,
+                       diabetes_pedigree, age],
+    "Normal Range"  : ["Male/Female","0–10","70–140 mg/dL","60–80 mmHg",
+                       "10–50 mm","16–166 IU/mL","18.5–24.9",
+                       "0.0–1.0","–"]
+}
     st.dataframe(pd.DataFrame(summary_data), use_container_width=True, hide_index=True)
 
     # ── Model Accuracy Comparison Chart ──
@@ -150,12 +170,16 @@ with col2:
     if predict_btn:
         with st.spinner("🤖 Analyzing patient data..."):
             try:
+                # prediction, confidence, risk_label, advice = predict_and_advise(
+                #     pregnancies, glucose, blood_pressure,
+                #     skin_thickness, insulin, bmi,
+                #     diabetes_pedigree, age
+                # )
                 prediction, confidence, risk_label, advice = predict_and_advise(
-                    pregnancies, glucose, blood_pressure,
-                    skin_thickness, insulin, bmi,
-                    diabetes_pedigree, age
+                     pregnancies, glucose, blood_pressure,
+                     skin_thickness, insulin, bmi,
+                     diabetes_pedigree, age, gender
                 )
-
                 # ── Result Card ──
                 if prediction == 1:
                     st.markdown(f"""
